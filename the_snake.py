@@ -1,4 +1,4 @@
-from random import randint
+from random import choice, randint
 
 import pygame
 
@@ -97,7 +97,11 @@ class Snake(GameObject):
             position=((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2)),
             body_color=SNAKE_COLOR
         )
-        self.reset()
+        self.length = 1
+        self.positions = [self.position]
+        self.direction = RIGHT
+        self.next_direction = None
+        self.last = None
 
     def update_direction(self):
         """Обновляет направление движения змейки."""
@@ -114,6 +118,11 @@ class Snake(GameObject):
         new_head_x = (head_x + dir_x * GRID_SIZE) % SCREEN_WIDTH
         new_head_y = (head_y + dir_y * GRID_SIZE) % SCREEN_HEIGHT
         new_head = (new_head_x, new_head_y)
+
+        # Проверка на столкновение с самой собой
+        if new_head in self.positions[1:]:
+            self.reset()
+            return
 
         # Добавляем новую голову
         self.positions.insert(0, new_head)
@@ -153,9 +162,8 @@ class Snake(GameObject):
     def reset(self):
         """Сбрасывает змейку в начальное состояние."""
         self.length = 1
-        self.positions = [self.position]
-        self.direction = RIGHT
-        self.next_direction = None
+        self.positions = [((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))]
+        self.direction = choice([UP, DOWN, LEFT, RIGHT])
         self.last = None
 
 
@@ -208,10 +216,6 @@ def main():
             # Убедимся, что яблоко не появилось на змейке
             while apple.position in snake.positions:
                 apple.randomize_position()
-
-        # Проверка на столкновение с собой
-        if snake.get_head_position() in snake.positions[1:]:
-            snake.reset()
 
         # Очистка экрана
         screen.fill(BOARD_BACKGROUND_COLOR)
