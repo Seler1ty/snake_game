@@ -39,7 +39,6 @@ pygame.display.set_caption('Змейка')
 clock = pygame.time.Clock()
 
 
-# Тут опишите все классы игры.
 class GameObject:
     """Базовый класс для игровых объектов."""
 
@@ -122,6 +121,8 @@ class Snake(GameObject):
         new_position = (x, y)
 
         self.positions.insert(0, new_position)
+
+        # Удаляем последний элемент только если длина превышает нужную
         if len(self.positions) > self.length:
             self.last = self.positions.pop()
         else:
